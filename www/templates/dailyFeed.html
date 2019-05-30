@@ -1,0 +1,20 @@
+<ion-view view-title="{{countryId}}">
+  <ion-content>
+      <ion-refresher on-refresh="doRefresh()" pulling-text="Pull to refresh...">
+        </ion-refresher>
+        
+        <div class="list card" ng-repeat="article in articles">
+        
+            <div class="item item-body">
+              <img class="item item-image " ng-src={{article.urlToImage}} style="width: 100%" alt="Image">
+              <h2>{{article.title}}</h2>
+              <p><strong>Source:</strong>{{article.source.name}}</p>
+              <p><strong>Author:</strong>{{article.author}}</p>
+              <p>{{article.description}}</p>
+              <p><strong>Published At:</strong>{{article.publishedAt | date:'medium'}}</p>
+            </div>
+          
+          </div>
+      
+  </ion-content>
+</ion-view>

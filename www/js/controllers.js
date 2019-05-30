@@ -41,16 +41,64 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
+.controller('dailyFeedCtrl', function($scope,$stateParams,dailyFeedFactory) {
+  console.log("controller");
+   $scope.countryId = $stateParams.countryId;
+
+    //Default view of page
+    dailyFeedView=()=>{
+      dailyFeedFactory.view($scope.countryId)
+      .then(function(response) {
+        if(response.data.status === "ok") {
+                  $scope.articles= response.data.articles;
+        }
+        else{
+          alert("Error occured from Server Side");
+        }
+      })
+      .catch(function() {
+              alert("Connection failure");
+      });
+    }
+    dailyFeedView();
+
+    $scope.doRefresh=()=> {
+          dailyFeedView();
+          $scope.$broadcast('scroll.refreshComplete');
+    }
+      
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+
+.factory("dailyFeedFactory", function($http, $q) {
+	return {
+		view : function(countryId) {
+			var deferred = $q.defer();
+			$http({
+				"method" : "GET",
+				"url" : "https://newsapi.org/v2/top-headlines?country="+ countryId +"&apiKey=ba97c3d4768f403c824674e9be23df42"
+			})
+			.then(function(resolveObj) {
+				deferred.resolve(resolveObj)
+			})
+			.catch(function(rejectObj) {
+				deferred.reject(rejectObj)
+			})
+			return deferred.promise;
+        },
+      catView : function(countryId, category) {
+			var deferred = $q.defer();
+			$http({
+				"method" : "GET",
+				"url" : "https://newsapi.org/v2/top-headlines?country="+ countryId + "&category="+ category +"&apiKey=ba97c3d4768f403c824674e9be23df42"
+			})
+			.then(function(resolveObj) {
+				deferred.resolve(resolveObj)
+			})
+			.catch(function(rejectObj) {
+				deferred.reject(rejectObj)
+			})
+			return deferred.promise;
+		}
+	}
 });
